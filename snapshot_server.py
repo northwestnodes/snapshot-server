@@ -5,11 +5,10 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from api_models import ResponseModel, ProcessFileModel, DefaultResponses
 from api_security import handle_authorization, AuthStatus
-from common import getenv, ensure_directory
+from common import check_file, getenv, check_directory, remove_files
 
 import os
 import sys
-import glob
 import time
 import logging
 import shutil
@@ -48,21 +47,14 @@ async def api_processfile(op: ProcessFileModel, request: Request):
     dst_dir = f'{env_dst_dir}/{op.network}'
     dst_file = f'{dst_dir}/{op.filename}'
 
-    if not os.path.exists(src_file):
-        raise HTTPException(status_code=503,detail=f'File {op.filename} not found')
-
-    ensure_directory(dst_dir)
-
-    old_files = glob.glob(f'{dst_dir}/*')
-    for f in old_files:
-        logger.info(f'Removing old snapshot {f}')
-        os.remove(f)
+    check_file(src_file)
+    check_directory(dst_dir)
+    remove_files(dst_dir)
 
     logger.info(f'Moving new snapshot {src_file} to {dst_file}')
     shutil.move(src_file, dst_file)
 
     logger.info(f'File {op.filename} processed successfully')
-
     return {'status': 'success', 'message': f'File {op.filename} processed successfully'}
 
 
