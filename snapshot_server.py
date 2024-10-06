@@ -18,7 +18,7 @@ import uvicorn
 sys.path.insert(0, os.path.abspath('.'))
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(f'    snapshot_server')
+logger = logging.getLogger(f'     snapshot_server')
 
 load_dotenv()
 

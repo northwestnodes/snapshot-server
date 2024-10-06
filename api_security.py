@@ -19,8 +19,6 @@ class AuthStatus(Enum):
     MISSING = 2
 
 def is_authorized(req: Request):
-    logging.info(f'Checking authorization')
-
     if len(env_auth_token) == 0:
         logging.info('SS_AUTH_TOKEN not set, authorization disabled')
         return AuthStatus.DISABLED
