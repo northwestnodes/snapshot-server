@@ -4,7 +4,7 @@ class ResponseModel(BaseModel):
     status: str = 'success'
     message: str
 
-class ProcessFileModel(ResponseModel):
+class ProcessFileModel(BaseModel):
     filename: str
     network: str
 

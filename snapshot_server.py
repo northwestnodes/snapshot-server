@@ -18,7 +18,7 @@ import uvicorn
 sys.path.insert(0, os.path.abspath('.'))
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(f'    snapshot_server')
 
 load_dotenv()
 
@@ -30,16 +30,12 @@ env_tmpdir = getenv('SS_TMPDIR')
 env_dst_dir = getenv('SS_DSTDIR')
 env_api_host = getenv('SS_API_HOST', '0.0.0.0')
 env_api_port = int(getenv('SS_API_PORT', '8000'))
+env_timeout_keep_alive = int(getenv('SS_API_TIMEOUT', '300'))
 
 #################################################################
 
 @api.get('/')
-async def root() -> ResponseModel:
-    return DefaultResponses.success
-
-@api.get('/authtest')
-async def authtest(request: Request) -> ResponseModel:
-    handle_authorization(request)
+async def api_root() -> ResponseModel:
     return DefaultResponses.success
 
 @api.post('/api/v1/snapshot/processfile')
@@ -51,6 +47,9 @@ async def api_processfile(op: ProcessFileModel, request: Request):
     src_file = f'{env_tmpdir}/{op.filename}'
     dst_dir = f'{env_dst_dir}/{op.network}'
     dst_file = f'{dst_dir}/{op.filename}'
+
+    if not os.path.exists(src_file):
+        raise HTTPException(status_code=503,detail=f'File {op.filename} not found')
 
     ensure_directory(dst_dir)
 
@@ -68,4 +67,4 @@ async def api_processfile(op: ProcessFileModel, request: Request):
 
 
 if __name__ == "__main__":
-    uvicorn.run(api, host=env_api_host, port=env_api_port)
+    uvicorn.run(api, host=env_api_host, port=env_api_port, timeout_keep_alive=env_timeout_keep_alive)
