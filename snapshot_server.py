@@ -30,7 +30,7 @@ env_tmpdir = getenv('SS_TMPDIR')
 env_dst_dir = getenv('SS_DSTDIR')
 env_api_host = getenv('SS_API_HOST', '0.0.0.0')
 env_api_port = int(getenv('SS_API_PORT', '8000'))
-env_timeout_keep_alive = int(getenv('SS_API_TIMEOUT', '300'))
+env_timeout_keep_alive = int(getenv('SS_API_TIMEOUT', '600'))
 
 #################################################################
 
