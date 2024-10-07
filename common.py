@@ -22,3 +22,6 @@ def remove_files(path):
     old_files = glob.glob(f'{path}/*')
     for f in old_files:
         os.remove(f)
+
+def move_file(src, dst):
+    os.rename(src, dst)
